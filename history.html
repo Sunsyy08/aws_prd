@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>인식 기록 | 교복/사복 실시간 인식 시스템</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    <div>
+      <h1>교복/사복 실시간 인식 시스템</h1>
+      <p>AI 기반 복장 규정 관리 솔루션</p>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab" onclick="location.href='index.html'">실시간 인식</button>
+    <button class="tab active">인식 기록</button>
+    <button class="tab">알림 시스템</button>
+  </nav>
+</header>
+
+<main class="layout">
+
+  <section class="left">
+
+    <div class="card">
+      <div class="history-header">
+        <div class="title">
+          <div class="icon">📅</div>
+          <h2>인식 기록</h2>
+        </div>
+
+        <div class="search-box">
+          <span>🔍</span>
+          <input id="searchInput" type="text" placeholder="학번 또는 이름 검색..." />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>날짜</th>
+              <th>시간</th>
+              <th>학번</th>
+              <th>이름</th>
+              <th>인식 결과</th>
+              <th>위반 여부</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <!-- JS로 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+  <aside class="right">
+    <div class="card">
+      <h3>📊 요약</h3>
+      <p>총 인식: 255건</p>
+      <p>위반: 8건</p>
+    </div>
+  </aside>
+
+</main>
+
+<script src="js/history.js"></script>
+</body>
+</html>
