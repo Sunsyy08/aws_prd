@@ -1,0 +1,13 @@
+/* 추가 커스텀 스타일 (필요 시 확장 가능) */
+
+body {
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+
+.notification-card {
+  transition: all 0.2s ease;
+}
+
+.notification-card:hover {
+  transform: translateY(-2px);
+}
