@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>인식 기록 | 교복/사복 실시간 인식 시스템</title>
+
+  <!-- ✅ index.html과 동일한 공통 CSS -->
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/history.css">
 </head>
 <body>
 
+<!-- ================= 상단 바 (index.html과 100% 동일) ================= -->
 <header class="topbar">
   <div class="logo">
     <div class="logo-icon">🛡️</div>
@@ -18,16 +22,18 @@
 
   <nav class="tabs">
     <button class="tab" onclick="location.href='index.html'">실시간 인식</button>
-    <button class="tab active">인식 기록</button>
-    <button class="tab">알림 시스템</button>
+    <button class="tab active" onclick="location.href='history.html'">인식 기록</button>
+    <button class="tab" onclick="location.href='notification.html'">알림 시스템</button>
   </nav>
 </header>
+<!-- =================================================================== -->
 
+<!-- ================= 메인 레이아웃 ================= -->
 <main class="layout">
 
   <section class="left">
-
     <div class="card">
+
       <div class="history-header">
         <div class="title">
           <div class="icon">📅</div>
@@ -36,7 +42,10 @@
 
         <div class="search-box">
           <span>🔍</span>
-          <input id="searchInput" type="text" placeholder="학번 또는 이름 검색..." />
+          <input
+            type="text"
+            placeholder="학번 또는 이름 검색..."
+          />
         </div>
       </div>
 
@@ -52,14 +61,29 @@
               <th>위반 여부</th>
             </tr>
           </thead>
-          <tbody id="historyBody">
-            <!-- JS로 렌더링 -->
+          <tbody>
+            <tr>
+              <td>2025-12-19</td>
+              <td>08:32</td>
+              <td>30112</td>
+              <td>김민준</td>
+              <td><span class="badge blue">👔 교복</span></td>
+              <td><span class="badge green">정상</span></td>
+            </tr>
+
+            <tr>
+              <td>2025-12-19</td>
+              <td>08:45</td>
+              <td>30205</td>
+              <td>이서연</td>
+              <td><span class="badge red">👕 사복</span></td>
+              <td><span class="badge red">위반</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
 
     </div>
-
   </section>
 
   <aside class="right">
@@ -72,6 +96,5 @@
 
 </main>
 
-<script src="js/history.js"></script>
 </body>
 </html>
