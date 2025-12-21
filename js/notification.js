@@ -26,15 +26,6 @@ const notifications = [
     status: "read",
     severity: "low",
   },
-  {
-    id: 4,
-    type: "violation",
-    student: "신유진",
-    message: "사복 착용 위반 감지",
-    time: "어제",
-    status: "read",
-    severity: "high",
-  },
 ];
 
 const getIcon = (type) => {
