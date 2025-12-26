@@ -1,142 +1,139 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <title>교복/사복 실시간 인식 시스템</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
-<header class="topbar">
-  <div class="logo">
-    <div class="logo-icon">🛡️</div>
-    <div>
-      <h1>교복/사복 실시간 인식 시스템</h1>
-      <p>AI 기반 복장 규정 관리 솔루션</p>
-    </div>
-  </div>
-
-  <!-- tabs -->
-<nav class="tabs">
-  <button class="tab active" onclick="location.href='index.html'">실시간 인식</button>
-  <button class="tab" onclick="location.href='history.html'">인식 기록</button>
-  <button class="tab" onclick="location.href = 'notification.html'">알림 시스템</button>
-</nav>
-
-
-</header>
-
-<main class="layout">
-
-  <!-- LEFT -->
-  <section class="left">
-    <div class="card">
-      <div class="card-header">
-        <h2>실시간 카메라 피드</h2>
-        <span class="status">● 정상</span>
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <h1>교복/사복 실시간 인식 시스템</h1>
+        <p>AI 기반 복장 규정 관리 솔루션</p>
       </div>
+    </div>
 
-      <!-- CAMERA -->
-      <div class="camera">
-        <div class="camera-inner">
+    <!-- tabs -->
+    <nav class="tabs">
+      <button class="tab active" onclick="location.href='index.html'">실시간 인식</button>
+      <button class="tab" onclick="location.href='history.html'">인식 기록</button>
+      <button class="tab" onclick="location.href = 'notification.html'">알림 시스템</button>
+    </nav>
 
-          <!-- ⭐ 실제 웹캠 -->
-          <video
-            id="camera"
-            autoplay
-            playsinline
-            muted
-          ></video>
 
-          <!-- 파란 테두리 -->
-          <div class="camera-frame"></div>
+  </header>
 
-          <!-- 안내 문구 (카메라 켜지면 숨김) -->
-          <div class="camera-center" id="cameraPlaceholder">
-            📷<br />
-            <span>웹캠 피드 영역</span>
+  <main class="layout">
+
+    <!-- LEFT -->
+    <section class="left">
+      <div class="card">
+        <div class="card-header">
+          <h2>실시간 카메라 피드</h2>
+          <span class="status">● 정상</span>
+        </div>
+
+        <!-- CAMERA -->
+        <div class="camera">
+          <div class="camera-inner">
+
+            <!-- ⭐ 실제 웹캠 -->
+            <video id="camera" autoplay playsinline muted></video>
+
+            <!-- 파란 테두리 -->
+            <div class="camera-frame"></div>
+
+            <!-- 안내 문구 (카메라 켜지면 숨김) -->
+            <div class="camera-center" id="cameraPlaceholder">
+              📷<br />
+              <span>웹캠 피드 영역</span>
+            </div>
+
           </div>
+        </div>
 
+        <div class="form">
+          <input id="studentNumber" placeholder="예: 20250101" />
+          <input id="studentName" placeholder="예: 홍길동" />
+        </div>
+
+
+        <button class="primary-btn" id="captureBtn">
+          📷 촬영하기 / 재인식
+        </button>
+      </div>
+
+      <!-- Today Stats -->
+      <div class="today-stats">
+        <div class="today-card success">
+          <div class="icon">✔</div>
+          <div>
+            <p class="label">오늘 정상 (교복)</p>
+            <p class="value" id="todayUniform">0명</p>
+          </div>
+        </div>
+
+        <div class="today-card danger">
+          <div class="icon">✖</div>
+          <div>
+            <p class="label">오늘 위반 (사복)</p>
+            <p class="value" id="todayViolation">0명</p>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="form">
-        <input placeholder="예: 20250101" />
-        <input placeholder="예: 홍길동" />
-      </div>
+    <!-- RIGHT -->
+    <aside class="right">
 
-      <button class="primary-btn" id="captureBtn">
-        📷 촬영하기 / 재인식
-      </button>
-    </div>
+      <div class="card">
+        <h3>🧠 AI 분석 결과</h3>
 
-    <!-- Today Stats -->
-    <div class="today-stats">
-      <div class="today-card success">
-        <div class="icon">✔</div>
-        <div>
-          <p class="label">오늘 정상 (교복)</p>
-          <p class="value">247명</p>
+        <div class="result" id="resultStatus">
+          <span>상태</span>
+          <strong>-</strong>
         </div>
-      </div>
 
-      <div class="today-card danger">
-        <div class="icon">✖</div>
-        <div>
-          <p class="label">오늘 위반 (사복)</p>
-          <p class="value">8명</p>
+
+        <div class="row">
+          <span>인식 결과</span>
+          <span class="badge" id="resultBadge">-</span>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- RIGHT -->
-  <aside class="right">
+        <div class="row">
+          <span>신뢰도</span>
+          <span id="resultConfidence">-</span>
+        </div>
 
-    <div class="card">
-      <h3>🧠 AI 분석 결과</h3>
+        <div class="progress">
+          <div class="bar"></div>
+        </div>
 
-      <div class="result success">
-        <span>상태</span>
-        <strong>✔ 정상</strong>
+        <div class="time" id="resultTime">-</div>
       </div>
 
-      <div class="row">
-        <span>인식 결과</span>
-        <span class="badge blue">👔 교복</span>
+      <div class="card">
+        <h3>🔔 생활안전부 자동 알림</h3>
+
+        <div class="toggle">
+          <span>자동 알림</span>
+          <div class="switch on"></div>
+        </div>
+
+        <ul class="log" id="notificationLog"></ul>
+
       </div>
 
-      <div class="row">
-        <span>신뢰도</span>
-        <span>97.5%</span>
-      </div>
+    </aside>
+  </main>
 
-      <div class="progress">
-        <div class="bar"></div>
-      </div>
-
-      <div class="time">🕒 오후 12:19:03</div>
-    </div>
-
-    <div class="card">
-      <h3>🔔 생활안전부 자동 알림</h3>
-
-      <div class="toggle">
-        <span>자동 알림</span>
-        <div class="switch on"></div>
-      </div>
-
-      <ul class="log">
-        <li>김민준 · 사복 착용 <span>14:32</span></li>
-        <li>박서연 · 사복 착용 <span>12:15</span></li>
-        <li>이도윤 · 사복 착용 <span>10:08</span></li>
-      </ul>
-    </div>
-
-  </aside>
-</main>
-
-<!-- JS 연결 -->
-<script src="js/main.js"></script>
+  <!-- JS 연결 -->
+  <script src="js/main.js"></script>
 </body>
+
 </html>
