@@ -57,10 +57,36 @@ if (searchInput) {
   });
 }
 
+// 상단 알림 상태 업데이트
+function updateHeaderNotification() {
+  const notifRecords = JSON.parse(localStorage.getItem("notificationsState")) || [];
+  const unreadCount = notifRecords.filter(n => n.status === "unread").length;
+
+  // 상단 헤더 '알림 시스템' 버튼
+  const notifTab = document.querySelector(".tabs .tab[href='notification.html'], .tabs .tab.active");
+
+  if (!notifTab) return;
+
+  // 기존 span 제거
+  const existingBadge = notifTab.querySelector(".unread-badge");
+  if (existingBadge) existingBadge.remove();
+
+  if (unreadCount > 0) {
+    const badge = document.createElement("span");
+    badge.className = "unread-badge";
+    badge.textContent = `●`; // 또는 'NEW' 표시
+    badge.style.color = "red";
+    badge.style.marginLeft = "5px";
+    notifTab.appendChild(badge);
+  }
+}
+
+
 // 실시간 기록 업데이트 (index.html에서 기록 추가 시)
 window.addEventListener("storage", e => {
   if (e.key === RECORDS_KEY) {
     records = loadRecords();
     renderRecords(records);
   }
+  updateHeaderNotification();
 });

@@ -42,6 +42,12 @@
   <div id="notification-app" class="max-w-4xl mx-auto space-y-6"></div>
 </main>
 
+<!-- 데이터 초기화 버튼 (임시, 테스트용) -->
+<button 
+  onclick="localStorage.removeItem('notificationsState'); location.reload();" 
+  style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; z-index: 1000;">
+  🗑️ 알림 데이터 초기화
+</button>
 
 <!-- JS -->
 <script src="js/notification.js"></script>

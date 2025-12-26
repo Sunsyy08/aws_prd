@@ -25,10 +25,9 @@ function loadRecords() {
 
 function saveRecord(record) {
   const records = loadRecords();
-  records.unshift(record); // 최신 기록 맨 위
+  records.unshift(record);
   localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
 }
-
 
 // ================= 상태 저장용 =================
 const STATE_KEY = "indexState";
@@ -56,12 +55,10 @@ function saveState() {
 }
 // ===============================================
 
-
 // 웹캠
 navigator.mediaDevices.getUserMedia({ video: true })
   .then(stream => video.srcObject = stream)
   .catch(() => alert("카메라 접근 불가"));
-
 
 window.addEventListener("load", () => {
   const state = loadState();
@@ -77,15 +74,15 @@ window.addEventListener("load", () => {
 
   if (state.lastResult) {
     resultStatus.className = state.lastResult.statusClass;
-    resultStatus.querySelector("strong").textContent =
-      state.lastResult.statusText;
+    resultStatus.querySelector("strong").textContent = state.lastResult.statusText;
     resultBadge.textContent = state.lastResult.badgeText;
     resultBadge.className = state.lastResult.badgeClass;
     resultConfidence.textContent = state.lastResult.confidence;
     resultTime.textContent = state.lastResult.time;
   }
-});
 
+  updateHeaderNotification();
+});
 
 // 촬영 버튼
 captureBtn.addEventListener("click", async () => {
@@ -125,6 +122,8 @@ captureBtn.addEventListener("click", async () => {
 
 // UI 업데이트
 function updateUI(data) {
+  console.log("서버 응답 데이터:", data);  // 디버깅용
+  
   const now = new Date();
   const date = now.toISOString().split("T")[0];
   const time = now.toLocaleTimeString();
@@ -148,7 +147,21 @@ function updateUI(data) {
     resultBadge.className = "badge red";
   }
 
-  // 기록 저장 (교복/사복 모두)
+  // 입력된 값 가져오기 (서버 응답이 아닌 입력 필드에서)
+  const studentNumber = studentNumberInput.value.trim();
+  const name = studentNameInput.value.trim();
+  
+  console.log("전달할 데이터:", { name, studentNumber, uniformDetected: data.uniform_detected });
+
+  // 알림 추가
+  addNotification({
+    name: name,
+    studentId: studentNumber,
+    uniformDetected: data.uniform_detected,
+    time: time
+  });
+
+  // 기록 저장
   saveRecord({
     date,
     time,
@@ -158,9 +171,6 @@ function updateUI(data) {
     violation: !data.uniform_detected
   });
 
-  // 알림 로그
-  addNotification(data.name, data.uniform_detected);
-
   // 상태 저장
   saveState();
 
@@ -168,49 +178,67 @@ function updateUI(data) {
   resultTime.textContent = `🕒 ${time}`;
 }
 
+function addNotification({ name, studentId, uniformDetected, time }) {
+  // 1. 기존 알림 불러오기
+  let notifRecords = JSON.parse(localStorage.getItem("notificationsState")) || [];
 
+  const studentString = name + " (" + studentId + ")";
 
-// 알림 로그 추가
-function addNotification(name, isUniform) {
-  const li = document.createElement("li");
+  const newNotification = {
+    id: Date.now(),
+    type: "violation",
+    student: studentString,
+    message: uniformDetected ? "교복 착용" : "사복 착용 위반 감지",
+    time: time,
+    status: "unread",
+    severity: "high",
+    uniformDetected: uniformDetected
+  };
 
-  const now = new Date();
-  const time =
-    now.getHours().toString().padStart(2, "0") +
-    ":" +
-    now.getMinutes().toString().padStart(2, "0") +
-    ":" +
-    now.getSeconds().toString().padStart(2, "0");
+  // 2. 새 알림 앞에 추가
+  notifRecords.unshift(newNotification);
 
-  if (isUniform) {
-    li.innerHTML = `${name} · 교복 착용 <span>${time}</span>`;
-    li.style.color = "#2ecc71";
-  } else {
-    li.innerHTML = `${name} · 사복 착용 <span>${time}</span>`;
-    li.style.color = "#e74c3c";
+  // 3. 최대 12개 유지 (초과되면 오래된 것 제거)
+  if (notifRecords.length > 12) {
+    notifRecords = notifRecords.slice(0, 12);
   }
 
-  notificationLog.prepend(li);
+  // 4. localStorage 업데이트
+  localStorage.setItem("notificationsState", JSON.stringify(notifRecords));
+
+  // 5. 화면에 렌더링 (자동 알림 카드)
+  notificationLog.innerHTML = ""; // 초기화
+  notifRecords.forEach(n => {
+    const li = document.createElement("li");
+    li.innerHTML = `${n.student} · ${n.uniformDetected ? "교복" : "사복"} 착용 <span>${n.time}</span>`;
+    li.style.color = n.uniformDetected ? "#2ecc71" : "#e74c3c";
+    notificationLog.appendChild(li);
+  });
+
+  // 6. 상단 알림 배지 업데이트
+  updateHeaderNotification();
 }
 
 
-function addAlert(name, isUniform) {
-  const li = document.createElement("li");
 
-  const now = new Date();
-  const time =
-    now.getHours().toString().padStart(2, "0") +
-    ":" +s
-    now.getMinutes().toString().padStart(2, "0");
+// 상단 알림 상태 업데이트
+function updateHeaderNotification() {
+  const notifRecords = JSON.parse(localStorage.getItem("notificationsState")) || [];
+  const unreadCount = notifRecords.filter(n => n.status === "unread").length;
 
-  if (isUniform) {
-    li.innerHTML = `${name} · 교복 착용 <span>${time}</span>`;
-    li.style.color = "#2ecc71"; // 초록 (정상)
-  } else {
-    li.innerHTML = `${name} · 사복 착용 <span>${time}</span>`;
-    li.style.color = "#e74c3c"; // 빨강 (위반)
+  const notifTab = document.querySelector(".tabs .tab[href='notification.html'], .tabs .tab.active");
+
+  if (!notifTab) return;
+
+  const existingBadge = notifTab.querySelector(".unread-badge");
+  if (existingBadge) existingBadge.remove();
+
+  if (unreadCount > 0) {
+    const badge = document.createElement("span");
+    badge.className = "unread-badge";
+    badge.textContent = `●`;
+    badge.style.color = "red";
+    badge.style.marginLeft = "5px";
+    notifTab.appendChild(badge);
   }
-
-  alertLog.prepend(li);
 }
-
